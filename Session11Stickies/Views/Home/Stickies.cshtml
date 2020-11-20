@@ -1,0 +1,22 @@
+﻿@model List<Category>
+
+@{
+    Layout = null;
+}
+
+@foreach (var category in Model)
+{
+    <section class="sticky-column">
+        <h1>@category.Name</h1>
+        <div class="stickies">
+            @foreach (var sticky in category.Stickies.OrderBy(s => s.SortOrder))
+            {
+                <div id="@sticky.Id">@sticky.Text</div>
+            }
+        </div>
+    <div class="controls">
+        <div id="-1" class="btn btn-info" onclick="addSticky(@category.Id, '@("#text" + category.Id)')">+</div><input type="text" id="@("text" + category.Id)" />
+    </div>
+
+    </section>
+}

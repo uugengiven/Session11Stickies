@@ -1,0 +1,61 @@
+﻿@model List<Category>
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div>
+    <div class="btn btn-primary" onclick="addCategory()">+</div>
+    <input type="text" name="CategoryName" class="form-control" id="CategoryName" />
+</div>
+
+<div class="board" id="board">
+</div>
+
+@section Scripts {
+<script>
+    function addCategory() {
+        const url = "/home/addcategory";
+        const method = "post";
+        const categoryName = $("#CategoryName").val()
+
+        $.post(url, { CategoryName: categoryName }, loadStickies);
+    }
+
+    function addSticky(categoryId, inputId) {
+        const url = "/home/addSticky";
+        const text = $(inputId).val();
+
+        $.post(url, { categoryId, text }, loadStickies);
+    }
+
+    function loadStickies(something) {
+        console.log(something);
+        // Go to /home/stickies
+        // get all that html
+        // put it into the innerHTML of the board div
+
+        fetch("/home/stickies") // create and send a request
+            .then(res => {
+                // I have the whole response, if I want something from the page I return it here, and go to the next function
+                return res.text();
+            })
+            .then(data => {
+                // document.getElementById("board").innerHTML = data;
+                $("#board").html(data);
+                $(".stickies").sortable({
+                    update: (event, ui) => {
+                        // get the new order of stickies
+                        // send that order to c#
+                        const url = "/home/reorderstickies"
+                        const Ids = $(event.target).sortable("toArray");
+
+                        $.post(url, { Ids });
+                    }
+                })
+            }); // get the response
+    }
+
+    $(loadStickies);
+</script>
+}
